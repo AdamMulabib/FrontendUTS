@@ -4,6 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { useAuthStore as UseAuthStore} from "../store/UseAuthStore";
 
 type FormData = {
   email: string;
@@ -17,6 +18,7 @@ const schema = z.object({
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
+  const Login = UseAuthStore((state) => state.login);
   const navigate = useNavigate();
 
   const {
@@ -28,13 +30,21 @@ export default function Login() {
   });
 
   const onSubmit = (data: FormData) => {
-    setIsLoading(true);
+    console.log(data);
+    if (data.email === "24090040@gmail.com" && 
+      data.password === "24090040") {
+      setIsLoading(true);
+    } else {
+      alert("Login Gagal: Email atau password salah");
+
+    }
 
     setTimeout(() => {
       setIsLoading(false);
       console.log("Data Login:", data);
       alert("Login Berhasil!");
-      navigate("/");
+      Login(data.email);
+      navigate("/dashboard");
     }, 2000);
   };
 
