@@ -6,7 +6,7 @@ export default function Biodata() {
           Biodata Mahasiswa
         </h1>
         <p className="text-slate-500 mb-8">
-          Data mahasiswa pembuat website Event Management System.
+          Data mahasiswa pembuat website Invofest yang nyambung dengan railway.
         </p>
 
         <div className="grid md:grid-cols-2 gap-6">
