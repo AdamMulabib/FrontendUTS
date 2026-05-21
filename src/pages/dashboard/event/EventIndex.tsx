@@ -1,15 +1,53 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-const events = [
-  { id: 1, name: "Seminar AI", category: "Seminar", date: "2026-01-10", status: "Aktif" },
-  { id: 2, name: "Workshop React", category: "Workshop", date: "2026-02-15", status: "Nonaktif" },
-];
+interface EventType {
+  id: string;
+  name: string;
+  location: string;
+  dateEvent: string;
+  category?: {
+    name: string;
+  };
+  speakers?: {
+    pembicara: {
+      name: string;
+    };
+  }[];
+}
 
 export default function EventIndex() {
+  const [events, setEvents] = useState<EventType[]>([]);
+
+  const fetchEvents = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/events");
+      setEvents(response.data);
+    } catch (error) {
+      console.error("Gagal mengambil event", error);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    const confirmDelete = confirm("Yakin ingin menghapus event?");
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`http://localhost:3000/events/${id}`);
+      fetchEvents();
+    } catch (error) {
+      console.error("Gagal hapus event", error);
+      alert("Gagal menghapus event");
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
   return (
     <div className="p-6 max-w-6xl">
-
-      {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold">Event</h1>
@@ -24,73 +62,75 @@ export default function EventIndex() {
         </Link>
       </div>
 
-      {/* TABLE */}
       <div className="border rounded-lg overflow-hidden">
         <table className="w-full text-sm">
-          
-          {/* HEAD */}
           <thead className="bg-gray-50 text-gray-500">
             <tr>
               <th className="px-4 py-2 text-left">No</th>
               <th className="px-4 py-2 text-left">Nama</th>
               <th className="px-4 py-2 text-left">Kategori</th>
+              <th className="px-4 py-2 text-left">Pembicara</th>
               <th className="px-4 py-2 text-left">Tanggal</th>
-              <th className="px-4 py-2 text-left">Status</th>
+              <th className="px-4 py-2 text-left">Lokasi</th>
               <th className="px-4 py-2 text-left">Aksi</th>
             </tr>
           </thead>
 
-          {/* BODY */}
           <tbody>
-            {events.map((item, index) => (
-              <tr key={item.id} className="border-t hover:bg-gray-50">
-                
-                <td className="px-4 py-3">{index + 1}</td>
+            {events.length > 0 ? (
+              events.map((item, index) => (
+                <tr key={item.id} className="border-t hover:bg-gray-50">
+                  <td className="px-4 py-3">{index + 1}</td>
 
-                <td className="px-4 py-3 font-medium">{item.name}</td>
+                  <td className="px-4 py-3 font-medium">{item.name}</td>
 
-                <td className="px-4 py-3">
-                  <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-                    {item.category}
-                  </span>
+                  <td className="px-4 py-3">
+                    <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+                      {item.category?.name || "-"}
+                    </span>
+                  </td>
+
+                  <td className="px-4 py-3">
+                    {item.speakers?.[0]?.pembicara?.name || "-"}
+                  </td>
+
+                  <td className="px-4 py-3 text-gray-500">
+                    {new Date(item.dateEvent).toLocaleDateString("id-ID")}
+                  </td>
+
+                  <td className="px-4 py-3">{item.location}</td>
+
+                  <td className="px-4 py-3 flex gap-2">
+                    <Link
+                      to={`/dashboard/event/edit/${item.id}`}
+                      className="text-xs px-2 py-1 border rounded hover:bg-yellow-50"
+                    >
+                      Edit
+                    </Link>
+
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      className="text-xs px-2 py-1 border rounded hover:bg-red-50"
+                    >
+                      Hapus
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7} className="text-center py-10 text-gray-400">
+                  Belum ada event
                 </td>
-
-                <td className="px-4 py-3 text-gray-500">
-                  {new Date(item.date).toLocaleDateString("id-ID")}
-                </td>
-
-                <td className="px-4 py-3">
-                  <span
-                    className={`text-xs px-2 py-1 rounded ${
-                      item.status === "Aktif"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-                </td>
-
-                <td className="px-4 py-3 flex gap-2">
-                  <button className="text-xs px-2 py-1 border rounded hover:bg-yellow-50">
-                    Edit
-                  </button>
-                  <button className="text-xs px-2 py-1 border rounded hover:bg-red-50">
-                    Hapus
-                  </button>
-                </td>
-
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
 
-        {/* FOOTER */}
         <div className="px-4 py-2 text-xs text-gray-400 border-t">
           Total {events.length} event
         </div>
       </div>
-
     </div>
   );
 }

@@ -1,20 +1,16 @@
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
 
-const schema = z.object({
-  name: z.string().min(3, "Nama event minimal 3 karakter"),
-  categoryId: z.string().min(1, "Kategori wajib dipilih"),
-  pembicaraId: z.string().min(1, "Pembicara wajib dipilih"),
-  dateEvent: z.string().min(1, "Tanggal event wajib diisi"),
-  location: z.string().min(3, "Lokasi minimal 3 karakter"),
-  description: z.string().min(5, "Deskripsi minimal 5 karakter"),
-});
-
-type FormData = z.infer<typeof schema>;
+type FormData = {
+  name: string;
+  categoryId: string;
+  pembicaraId: string;
+  dateEvent: string;
+  location: string;
+  description: string;
+};
 
 type Category = {
   id: string;
@@ -26,18 +22,14 @@ type Speaker = {
   name: string;
 };
 
-export default function EventCreate() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [speakers, setSpeakers] = useState<Speaker[]>([]);
+export default function EventEdit() {
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
-  });
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [speakers, setSpeakers] = useState<Speaker[]>([]);
+
+  const { register, handleSubmit, reset } = useForm<FormData>();
 
   useEffect(() => {
     async function fetchData() {
@@ -50,20 +42,37 @@ export default function EventCreate() {
           "http://localhost:3000/pembicara"
         );
 
+        const eventResponse = await axios.get(
+          `http://localhost:3000/events/${id}`
+        );
+
+        const event = eventResponse.data;
+
         setCategories(categoryResponse.data);
         setSpeakers(speakerResponse.data);
+
+        reset({
+          name: event.name,
+          categoryId: event.categoryId,
+          pembicaraId: event.speakers?.[0]?.pembicaraId || "",
+          dateEvent: event.dateEvent
+            ? event.dateEvent.substring(0, 10)
+            : "",
+          location: event.location,
+          description: event.description,
+        });
       } catch (error) {
         console.log(error);
-        alert("Gagal mengambil data kategori atau pembicara");
+        alert("Gagal mengambil data event");
       }
     }
 
     fetchData();
-  }, []);
+  }, [id, reset]);
 
-  const onSubmit = async (data: FormData) => {
+  async function onSubmit(data: FormData) {
     try {
-      await axios.post("http://localhost:3000/events", {
+      await axios.put(`http://localhost:3000/events/${id}`, {
         name: data.name,
         categoryId: data.categoryId,
         dateEvent: data.dateEvent,
@@ -72,33 +81,27 @@ export default function EventCreate() {
         pembicaraIds: [data.pembicaraId],
       });
 
-      alert("Event berhasil dibuat!");
+      alert("Event berhasil diupdate!");
       navigate("/dashboard/events");
     } catch (error) {
       console.log(error);
-      alert("Gagal membuat event");
+      alert("Gagal update event");
     }
-  };
+  }
 
   return (
     <div className="max-w-xl mx-auto mt-10 p-6 border rounded-xl shadow">
-      <h1 className="text-2xl font-bold mb-4">Tambah Event</h1>
+      <h1 className="text-2xl font-bold mb-4">Edit Event</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        {/* NAMA EVENT */}
         <div>
           <label className="block font-medium mb-1">Nama Event</label>
           <input
             {...register("name")}
-            placeholder="Nama Event"
             className="border p-2 rounded w-full"
           />
-          {errors.name && (
-            <p className="text-red-500 text-sm">{errors.name.message}</p>
-          )}
         </div>
 
-        {/* KATEGORI */}
         <div>
           <label className="block font-medium mb-1">Kategori Event</label>
           <select
@@ -112,12 +115,8 @@ export default function EventCreate() {
               </option>
             ))}
           </select>
-          {errors.categoryId && (
-            <p className="text-red-500 text-sm">{errors.categoryId.message}</p>
-          )}
         </div>
 
-        {/* PEMBICARA */}
         <div>
           <label className="block font-medium mb-1">Pembicara</label>
           <select
@@ -131,12 +130,8 @@ export default function EventCreate() {
               </option>
             ))}
           </select>
-          {errors.pembicaraId && (
-            <p className="text-red-500 text-sm">{errors.pembicaraId.message}</p>
-          )}
         </div>
 
-        {/* TANGGAL */}
         <div>
           <label className="block font-medium mb-1">Tanggal Event</label>
           <input
@@ -144,39 +139,26 @@ export default function EventCreate() {
             {...register("dateEvent")}
             className="border p-2 rounded w-full"
           />
-          {errors.dateEvent && (
-            <p className="text-red-500 text-sm">{errors.dateEvent.message}</p>
-          )}
         </div>
 
-        {/* LOKASI */}
         <div>
           <label className="block font-medium mb-1">Lokasi</label>
           <input
             {...register("location")}
-            placeholder="Lokasi"
             className="border p-2 rounded w-full"
           />
-          {errors.location && (
-            <p className="text-red-500 text-sm">{errors.location.message}</p>
-          )}
         </div>
 
-        {/* DESKRIPSI */}
         <div>
           <label className="block font-medium mb-1">Deskripsi</label>
           <textarea
             {...register("description")}
-            placeholder="Deskripsi"
             className="border p-2 rounded w-full h-28"
           />
-          {errors.description && (
-            <p className="text-red-500 text-sm">{errors.description.message}</p>
-          )}
         </div>
 
-        <button className="bg-red-600 text-white p-2 rounded hover:bg-red-700 transition">
-          Simpan Event
+        <button className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 transition">
+          Update Event
         </button>
       </form>
     </div>
