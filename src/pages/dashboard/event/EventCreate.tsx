@@ -63,7 +63,7 @@ export default function EventCreate() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await axios.post("${import.meta.env.VITE_API_URL}/events", {
+      await axios.post(`${import.meta.env.VITE_API_URL}/events`, {
         name: data.name,
         categoryId: data.categoryId,
         dateEvent: data.dateEvent,
