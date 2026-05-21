@@ -22,7 +22,7 @@ export default function EventIndex() {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/events");
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/events`);
       setEvents(response.data);
     } catch (error) {
       console.error("Gagal mengambil event", error);
@@ -34,7 +34,7 @@ export default function EventIndex() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:3000/events/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/events/${id}`);
       fetchEvents();
     } catch (error) {
       console.error("Gagal hapus event", error);

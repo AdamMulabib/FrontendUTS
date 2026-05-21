@@ -21,7 +21,7 @@ export default function CategoryEdit() {
   async function getCategory() {
     try {
       const response = await axios.get(
-        `http://localhost:3000/categories/${id}`
+        `${import.meta.env.VITE_API_URL}/categories/${id}`
       );
 
       reset(response.data);
@@ -33,7 +33,7 @@ export default function CategoryEdit() {
   async function onSubmit(data: FormData) {
     try {
       await axios.put(
-        `http://localhost:3000/categories/${id}`,
+        `${import.meta.env.VITE_API_URL}/categories/${id}`,
         data
       );
 

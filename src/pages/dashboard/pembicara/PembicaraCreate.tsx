@@ -25,7 +25,7 @@ export default function PembicaraCreate() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await axios.post("http://localhost:3000/pembicara", data);
+      await axios.post(`${import.meta.env.VITE_API_URL}/pembicara`, data);
 
       alert("Pembicara berhasil ditambahkan!");
       navigate("/dashboard/pembicara");

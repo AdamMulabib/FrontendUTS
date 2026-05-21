@@ -30,7 +30,7 @@ export default function PembicaraIndex() {
   async function getSpeakers() {
     try {
       const response = await axios.get(
-        "http://localhost:3000/pembicara"
+        `${import.meta.env.VITE_API_URL}/pembicara`
       );
 
       setSpeakers(response.data);
@@ -48,7 +48,7 @@ export default function PembicaraIndex() {
 
     try {
       await axios.delete(
-        `http://localhost:3000/pembicara/${id}`
+        `${import.meta.env.VITE_API_URL}/pembicara/${id}`
       );
 
       getSpeakers();

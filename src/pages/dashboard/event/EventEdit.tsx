@@ -35,15 +35,15 @@ export default function EventEdit() {
     async function fetchData() {
       try {
         const categoryResponse = await axios.get(
-          "http://localhost:3000/categories"
+          `${import.meta.env.VITE_API_URL}/categories`
         );
 
         const speakerResponse = await axios.get(
-          "http://localhost:3000/pembicara"
+          `${import.meta.env.VITE_API_URL}/pembicara`
         );
 
         const eventResponse = await axios.get(
-          `http://localhost:3000/events/${id}`
+          `${import.meta.env.VITE_API_URL}/events/${id}`
         );
 
         const event = eventResponse.data;
@@ -72,7 +72,7 @@ export default function EventEdit() {
 
   async function onSubmit(data: FormData) {
     try {
-      await axios.put(`http://localhost:3000/events/${id}`, {
+      await axios.put(`${import.meta.env.VITE_API_URL}/events/${id}`, {
         name: data.name,
         categoryId: data.categoryId,
         dateEvent: data.dateEvent,

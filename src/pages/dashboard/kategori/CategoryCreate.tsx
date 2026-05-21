@@ -25,7 +25,7 @@ export default function CategoryCreate() {
   const onSubmit = async (data: FormData) => {
     try {
       await axios.post(
-        "http://localhost:3000/categories",
+        `${import.meta.env.VITE_API_URL}/categories`,
         data
       );
 

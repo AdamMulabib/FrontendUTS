@@ -43,11 +43,11 @@ export default function EventCreate() {
     async function fetchData() {
       try {
         const categoryResponse = await axios.get(
-          "http://localhost:3000/categories"
+          `${import.meta.env.VITE_API_URL}/categories`
         );
 
         const speakerResponse = await axios.get(
-          "http://localhost:3000/pembicara"
+          `${import.meta.env.VITE_API_URL}/pembicara`
         );
 
         setCategories(categoryResponse.data);
@@ -63,7 +63,7 @@ export default function EventCreate() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await axios.post("http://localhost:3000/events", {
+      await axios.post("${import.meta.env.VITE_API_URL}/events", {
         name: data.name,
         categoryId: data.categoryId,
         dateEvent: data.dateEvent,

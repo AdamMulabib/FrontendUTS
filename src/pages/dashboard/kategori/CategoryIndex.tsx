@@ -14,7 +14,7 @@ export default function CategoryIndex() {
   async function getCategories() {
     try {
       const response = await axios.get(
-        "http://localhost:3000/categories"
+        `${import.meta.env.VITE_API_URL}/categories`
       );
 
       setCategories(response.data);
@@ -32,7 +32,7 @@ export default function CategoryIndex() {
 
     try {
       await axios.delete(
-        `http://localhost:3000/categories/${id}`
+        `${import.meta.env.VITE_API_URL}/categories/${id}`
       );
 
       getCategories();

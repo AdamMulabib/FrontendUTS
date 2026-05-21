@@ -17,7 +17,7 @@ export default function PembicaraEdit() {
 
   async function getPembicara() {
     try {
-      const response = await axios.get(`http://localhost:3000/pembicara/${id}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/pembicara/${id}`);
       reset(response.data);
     } catch (error) {
       console.log(error);
@@ -27,7 +27,7 @@ export default function PembicaraEdit() {
 
   async function onSubmit(data: FormData) {
     try {
-      await axios.put(`http://localhost:3000/pembicara/${id}`, data);
+      await axios.put(`${import.meta.env.VITE_API_URL}/pembicara/${id}`, data);
 
       alert("Pembicara berhasil diupdate!");
       navigate("/dashboard/pembicara");
