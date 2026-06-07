@@ -48,6 +48,13 @@ export default function DashboardLayout() {
             </Link>
 
             <Link
+              to="/dashboard/users"
+              className="p-2 rounded-2xl hover:bg-black transition-colors ease-in duration-150"
+            >
+              User
+            </Link>
+
+            <Link
               to="/dashboard/biodata"
               className="p-2 rounded-2xl hover:bg-black transition-colors ease-in duration-150"
             >

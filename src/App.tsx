@@ -38,6 +38,11 @@ import PembicaraIndex from "./pages/dashboard/pembicara/PembicaraIndex";
 import PembicaraCreate from "./pages/dashboard/pembicara/PembicaraCreate";
 import PembicaraEdit from "./pages/dashboard/pembicara/PembicaraEdit";
 
+// 👤 User
+import UserIndex from "./pages/dashboard/user/UserIndex";
+import UserCreate from "./pages/dashboard/user/UserCreate";
+import UserEdit from "./pages/dashboard/user/UserEdit";
+
 function App() {
   return (
     <BrowserRouter>
@@ -88,10 +93,17 @@ function App() {
               path="/dashboard/pembicara/create"
               element={<PembicaraCreate />}
             />
+            
+            {/* User */}
+            <Route path="/dashboard/users" element={<UserIndex />} />
+            <Route path="/dashboard/users/create" element={<UserCreate />} />
+            <Route path="/dashboard/users/edit/:id" element={<UserEdit />} />
+
             <Route
               path="/dashboard/pembicara/edit/:id"
               element={<PembicaraEdit />}
             />
+
           </Route>
         </Route>
       </Routes>
